@@ -14,13 +14,14 @@
  *                _________________
  *     twist --> |                 | --> DeadReckoning/pose2d
  *               |  DeadReckoning  |
- *     empty <-- |_________________| <-- DeadReckoning/empty
+ *     empty <-- |_________________| <-- DeadReckoning/pose2d
  *
  */
 
 #include "device.h"
 #include "tf/tf.h"
 #include "general_msgs/geometry_msgs.h"
+#include "general_odrs/geometry_odrs.h"
 #include "general_odrs/empty_odrs.h"
 
 namespace dRobot {
@@ -38,14 +39,17 @@ namespace dRobot {
 
 /* device class */
 
-class DeadReckoning: public device<pose2d_msg, empty_odr> {
+class DeadReckoning: public device<pose2d_msg, pose2d_odr> {
 public:
 	/* Pointers of child device */
 	device<twist_msg, empty_odr> *kinematics;
 
 protected:
 	/* Override: Called back after be shared an order */
-	void odrCallback(empty_odr odr){
+	void odrCallback(pose2d_odr odr){
+		myMsg.x = odr.x;
+		myMsg.y = odr.y;
+		myMsg.theta = odr.theta;
 	}
 
 	/* Override: Update myself */
@@ -65,14 +69,17 @@ protected:
 		kahanSummation(&myMsg.x, &c_x, dx);
 		kahanSummation(&myMsg.y, &c_y, dy);
 		kahanSummation(&myMsg.theta, &c_theta, msg.omega * period);
+
+		if (myMsg.theta > M_PI){
+			myMsg.theta -= 2.0*M_PI;
+		}
+		else if (myMsg.theta < -M_PI){
+			myMsg.theta += 2.0*M_PI;
+		}
 	}
 
 	/* Override: Initialize */
 	void initialize(){
-		myMsg.x = 0.0f;
-		myMsg.y = 0.0f;
-		myMsg.theta = 0.0f;
-
 		c_x = 0.0f;
 		c_y = 0.0f;
 		c_theta = 0.0f;
@@ -86,7 +93,10 @@ protected:
 
 public:
 	/* Constructor */
-	DeadReckoning(){
+	DeadReckoning(float x0, float y0, float theta0){
+		myMsg.x = x0;
+		myMsg.y = y0;
+		myMsg.theta = theta0;
 	}
 };
 

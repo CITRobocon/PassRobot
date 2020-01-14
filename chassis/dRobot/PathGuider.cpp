@@ -20,6 +20,10 @@ float PathGuider::ftheta(float v){
 	return coes[2][0]*v*v*v + coes[2][1]*v*v + coes[2][2]*v + coes[2][3];
 }
 
+float PathGuider::fv(float v){
+	return coes[3][0]*v*v*v + coes[3][1]*v*v + coes[3][2]*v + coes[3][3];
+}
+
 float PathGuider::fx_prime(float v){
 	return 3.0*coes[0][0]*v*v + 2.0*coes[0][1]*v + coes[0][2];
 }

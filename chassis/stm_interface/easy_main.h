@@ -8,6 +8,8 @@
 #ifndef EASY_MAIN_H_
 #define EASY_MAIN_H_
 
+#include "stm32f4xx_hal.h"
+
 #ifdef __cplusplus
 extern "C"{
 #endif

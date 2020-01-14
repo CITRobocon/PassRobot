@@ -365,12 +365,12 @@ dRobot::Odometer odometer_l(TIM4, 4000, 0.030);
 // System device
 dRobot::Kinematics kinematics;
 dRobot::DeadReckoning dead_reckoning(0.74385/2.0, 10.0 - 0.74385/2.0, 0.0);
-dRobot::PIDController pid_controller1(0.30, 0.001, 0.00001);
-dRobot::PIDController pid_controller2(0.30, 0.001, 0.00001);
-dRobot::PIDController pid_controller3(0.30, 0.001, 0.00001);
-dRobot::PIDController pid_controller4(0.30, 0.001, 0.00001);
+dRobot::PIDController pid_controller1(1.0, 0.001, 0.00001);
+dRobot::PIDController pid_controller2(1.0, 0.001, 0.00001);
+dRobot::PIDController pid_controller3(1.0, 0.001, 0.00001);
+dRobot::PIDController pid_controller4(1.0, 0.001, 0.00001);
 dRobot::WheelObserver wheel_observer;
-dRobot::PathGuider path_guider(3.0, 2.0);
+dRobot::PathGuider path_guider(5.0, 3.0);
 
 // Output device
 dRobot::LED led(GPIOB,GPIO_PIN_14);
@@ -464,13 +464,13 @@ void easy_setup(){
 	wheel_observer.setup(0.020, 2);
 
 	// setup keyboard
-	led >> &keyboard.toggle_dev[1];
-	wheel_observer >> &keyboard.twist_dev;
+	//led >> &keyboard.toggle_dev[1];
+	//wheel_observer >> &keyboard.twist_dev;
 	//motor_driver1 >> &keyboard.volume_dev[1];
 	//motor_driver2 >> &keyboard.volume_dev[2];
 	//motor_driver3 >> &keyboard.volume_dev[3];
 	//motor_driver4 >> &keyboard.volume_dev[4];
-	keyboard.setup("KeyI");
+	//keyboard.setup("KeyI");
 
 	// setup path_guider
 	dead_reckoning >> &path_guider.positioner;
@@ -487,7 +487,6 @@ void easy_setup(){
 
 
 void easy_loop(){
-	dRobot::pose2d_msg crr_pose;
 	dRobot::pose2d_odr new_pose;
 	dRobot::float_array_odr path_odr;
 	float arr[16] = {};
@@ -499,21 +498,20 @@ void easy_loop(){
 	HAL_Delay(1000);
 	while(button.shareMsg().val != 1) HAL_Delay(10);
 
-	/*
 	// path 1: to catch 1st boll
 	arr[0] = 0.1256;
 	arr[1] = -1.8767;
 	arr[2] = 1.8767;
 	arr[3] = 0.3744;
 
-	arr[4] = 7.2511;
+	arr[4] = 4.7511;
 	arr[5] = -13.8767;
 	arr[6] = 0.0;
 	arr[7] = 9.6256;
 
-	arr[8] = 1.5708;
-	arr[9] = -4.7124;
-	arr[10] = 4.7124;
+	arr[8] = 0.0;
+	arr[9] = 0.0;
+	arr[10] = 1.5708;
 	arr[11] = 0.0;
 
 	arr[12] = 0.0;
@@ -525,28 +523,21 @@ void easy_loop(){
 
 	while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
 	while(button.shareMsg().val != 1) HAL_Delay(10);
-
-	// pose correction
-	crr_pose = dead_reckoning.shareMsg();
-	new_pose.x = crr_pose.x + 0.25;
-	new_pose.y = crr_pose.y + 0.350;
-	new_pose.theta = crr_pose.theta;
-	dead_reckoning.shareOdr(new_pose);
-
+	/*
 	// path 2: to try spot1
-	arr[0] = 3.83;
-	arr[1] = -7.86;
-	arr[2] = 9.18;
+	arr[0] = 0.6050;
+	arr[1] = -1.6350;
+	arr[2] = 6.18;
 	arr[3] = 0.5;
 
-	arr[4] = 2.58;
-	arr[5] = -6.75;
-	arr[6] = 4.26;
-	arr[7] = 3.0;
+	arr[4] = 2.59;
+	arr[5] = -11.76;
+	arr[6] = 11.76;
+	arr[7] = 0.5;
 
-	arr[8] = 1.5708;
-	arr[9] = -4.7124;
-	arr[10] = 4.7124;
+	arr[8] = 0.0;
+	arr[9] = 0.0;
+	arr[10] = 1.5708;
 	arr[11] = 1.5708;
 
 	arr[12] = 0.0;
@@ -557,28 +548,22 @@ void easy_loop(){
 	path_guider.shareOdr(path_odr);
 
 	while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
-	*/
 	while(button.shareMsg().val != 1) HAL_Delay(10);
 
-	new_pose.x = 5.65;
-	new_pose.y = 3.09;
-	new_pose.theta = 3.1416;
-	dead_reckoning.shareOdr(new_pose);
-
 	// path 3: to catch 2nd ball
-	arr[0] = -3.83;
-	arr[1] = 3.63;
-	arr[2] = -4.95;
+	arr[0] = -0.6050;
+	arr[1] = 0.180;
+	arr[2] = -4.725;
 	arr[3] = 5.65;
 
-	arr[4] = -2.58;
-	arr[5] = 0.99;
-	arr[6] = 1.50;
+	arr[4] = -2.59;
+	arr[5] = -3.99;
+	arr[6] = 3.99;
 	arr[7] = 3.09;
 
-	arr[8] = -1.5708;
-	arr[9] = 4.7124;
-	arr[10] = -4.7124;
+	arr[8] = 0.0;
+	arr[9] = 0.0;
+	arr[10] = -1.5708;
 	arr[11] = 3.1416;
 
 	arr[12] = 0.0;
@@ -590,7 +575,7 @@ void easy_loop(){
 
 	while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
 	while(button.shareMsg().val != 1) HAL_Delay(10);
-	while(1);
+	*/
 
 	// path 4: to try spot2
 	arr[0] = 0.6050;
@@ -598,19 +583,19 @@ void easy_loop(){
 	arr[2] = 6.18;
 	arr[3] = 0.50;
 
-	arr[4] = 3.43;
+	arr[4] = 3.92;
 	arr[5] = -11.76;
 	arr[6] = 11.76;
 	arr[7] = 0.50;
 
 	arr[8] = 0.0;
 	arr[9] = 0.0;
-	arr[10] = -1.5708;
-	arr[11] = 3.1416;
+	arr[10] = 1.5708;
+	arr[11] = 1.5708;
 
 	arr[12] = 0.0;
-	arr[13] = -5.0;
-	arr[14] = 5.0;
+	arr[13] = -15.0;
+	arr[14] = 15.0;
 	arr[15] = 1.0;
 
 	path_guider.shareOdr(path_odr);
@@ -667,40 +652,34 @@ void easy_loop(){
 
 	path_guider.shareOdr(path_odr);
 
-	//while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
+	while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
 	while(button.shareMsg().val != 1) HAL_Delay(10);
 
 	// path 7: to kicking standby position
-	/*
-	arr[0] = -5.4037;
-	arr[1] = 8.0673;
-	arr[2] = 0.0767;
-	arr[3] = 0.3744;
+	arr[0] = 4.12;
+	arr[1] = -9.27;
+	arr[2] = 0.0;
+	arr[3] = 5.65;
 
-	arr[4] = -7.0471;
-	arr[5] = 22.8767;
-	arr[6] = -21.3767;
-	arr[7] = 9.6256;
+	arr[4] = -5.25;
+	arr[5] = 3.99;
+	arr[6] = -3.99;
+	arr[7] = 5.75;
 
-	arr[8] = 1.0505;
-	arr[9] = -3.1515;
-	arr[10] = 3.1515;
-	arr[11] = 0.0;
+	arr[8] = 0.0;
+	arr[9] = 0.0;
+	arr[10] = -1.5708;
+	arr[11] = 3.14;
 
 	arr[12] = 0.0;
-	arr[13] = -17.0;
-	arr[14] = 17.0;
+	arr[13] = -15.0;
+	arr[14] = 15.0;
 	arr[15] = 1.0;
 
 	path_guider.shareOdr(path_odr);
 
 	while(path_guider.shareMsg().val < 1.0) HAL_Delay(10);
 
-	HAL_Delay(500);
-	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_5);
-	HAL_Delay(100);
-	HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_5);
-	*/
 	while(1);
 }
 #endif

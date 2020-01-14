@@ -24,6 +24,7 @@
 
 #include "device.h"
 #include "general_msgs/geometry_msgs.h"
+#include "general_odrs/geometry_odrs.h"
 #include "general_odrs/empty_odrs.h"
 
 
@@ -53,7 +54,7 @@ typedef struct{
 
 class LidarPositioning: public device<pose2d_msg, empty_odr> {
 	/* Pointers of child device */
-	device<pose2d_msg, empty_odr> *positioning;
+	device<pose2d_msg, pose2d_odr> *positioning;
 
 	/* Override: Called back after be shared an order */
 	void odrCallback(empty_odr odr){
